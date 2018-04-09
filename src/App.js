@@ -7,17 +7,21 @@ import logo from './logo.svg';
 import './App.css';
 import FetchedDate from './FetchedDate';
 import API from './freckle';
-import totals, {WEEKS} from './math';
+import totals, {PTO_PER_YEAR, weeksOf} from './math';
 
 const moment = extendMoment(Moment);
 
+const AVAILABLE_YEARS = Array.from(moment.range(moment('2017-01-01'), moment()).by('year')).map((year) => year.format('YYYY'));
 
 class App extends Component {
   state = {
     fetched: null,
     users: [],
+    includeCurrentWeek: false,
     selectedUser: '',
-    totals: {}
+    selectedYear: _.last(AVAILABLE_YEARS),
+    totals: {},
+    data: [],
   }
 
   componentDidMount() {
@@ -29,19 +33,33 @@ class App extends Component {
       this.setState({users});
     });
   }
-  loadData = (selectedUser) => {
-    API.entries({user_id: selectedUser || this.state.selectedUser}).then((data) => {
+  loadData = ({selectedUser, selectedYear}) => {
+    API.entries({
+      user_id: selectedUser || this.state.selectedUser,
+      year: selectedYear || this.state.selectedYear,
+    }).then((data) => {
+      const {selectedYear, includeCurrentWeek} = this.state;
       const fetched = moment();
-      this.setState({totals: totals(data), fetched});
+      this.setState({totals: totals(data, weeksOf(selectedYear, includeCurrentWeek)), fetched, data});
     });
   }
-  selectUser = ({target:{value:selectedUser}}) => {
+  selectUser = ({target: {value:selectedUser}}) => {
     this.setState({selectedUser, totals: {}, fetched: null});
-    this.loadData(selectedUser);
+    this.loadData({selectedUser});
+  }
+  selectYear = ({target: {value:selectedYear}}) => {
+    this.setState({selectedYear, totals: {}, fetched: null});
+    this.loadData({selectedYear});
+  }
+  toggleIncludeCurrentWeek = () => {
+    this.setState(({includeCurrentWeek, data, selectedYear}) => ({
+      includeCurrentWeek: !includeCurrentWeek,
+      totals: totals(data, weeksOf(selectedYear, !includeCurrentWeek))
+    }));
   }
 
   render() {
-    const {users, selectedUser, totals, fetched} = this.state;
+    const {users, selectedUser, selectedYear, includeCurrentWeek, totals, fetched} = this.state;
     return (
       <div className="App">
         <header className="App-header">
@@ -53,9 +71,23 @@ class App extends Component {
               <option key={user.id} value={user.id}>{user.first_name} {user.last_name}</option>
             ))}
           </select>
+          <select value={selectedYear} onChange={this.selectYear}>
+            {AVAILABLE_YEARS.map((year) => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+          {selectedYear == _.last(AVAILABLE_YEARS) && (
+            <label>
+              <input type="checkbox" checked={includeCurrentWeek} onChange={this.toggleIncludeCurrentWeek}/>
+              Include current week
+            </label>
+          )}
           <FetchedDate date={fetched}/>
         </header>
         <div className="App-intro">
+          {totals.total && (
+            <h4>Up to <span style={{background: '#eee', padding: 8}}>{_.round(PTO_PER_YEAR - totals.total.used, 2)}</span> available with borrowing.</h4>
+          )}
           <table>
             <thead>
               <tr>
@@ -73,7 +105,7 @@ class App extends Component {
               </tr>
             </thead>
             <tbody>
-              {WEEKS.map((date) => {
+              {weeksOf(selectedYear, includeCurrentWeek).map((date) => {
                 const dateKey = date.format('YYYY-MM-DD');
                 const weekTotals = totals[dateKey] || {};
                 return (
@@ -106,7 +138,9 @@ class App extends Component {
                   <td>{_.round(totals.total.holiday, 2)}</td>
                   <td>{_.round(totals.total.total, 2)}</td>
                   <td></td>
-                  <td><strong>{_.round(totals.total.accrual, 2)}</strong></td>
+                  <td>
+                    <strong>{_.round(totals.total.accrual, 2)}</strong>
+                  </td>
                 </tr>
               )}
             </tfoot>

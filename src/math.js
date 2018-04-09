@@ -8,17 +8,26 @@ const PTO = 315594;
 const HACK_TIME = 306043;
 const HOLIDAY = 417567;
 
-const PTO_PER_WEEK = 6/52 * 40;
+export const PTO_PER_YEAR = 6 * 40;
+export const PTO_PER_WEEK = PTO_PER_YEAR/52;
 
-export const WEEKS = Array.from(moment.range(moment().startOf('year').startOf('week'), moment()).by('week'));
-
+export const weeksOf = (year, includeCurrentWeek=false) => {
+  year = year ? `${year}-01-02` : '';
+  const start = moment(year).startOf('year').startOf('week');
+  const end = moment.min(
+    moment(year).endOf('year').startOf('week'),
+    includeCurrentWeek ? moment() : moment().subtract(1, 'week'),
+  );
+  console.log(year, start, end)
+  return Array.from(moment.range(start, end).by('week'));
+}
 
 function matchProject(entry, project_id) {
   return entry.project_id === project_id ? entry.minutes / 60 : 0;
 }
 
-function finalSums(totals) {
-  return WEEKS.reduce((totals, week) => {
+function finalSums(totals, weeks=weeksOf()) {
+  return weeks.reduce((totals, week) => {
     const dateKey = week.format('YYYY-MM-DD');
     const weekTotal = totals[dateKey];
     const grandTotal = totals.total || {accrual: 0, count: 0, total: 0, billable: 0, hack: 0, sick: 0, pto: 0, clocked_holiday: 0, used: 0};
@@ -56,7 +65,7 @@ function finalSums(totals) {
   }, totals);
 }
 
-export default function totals(data) {
+export default function totals(data, weeks) {
   return finalSums(data.reduce((totals, {entry}) => {
     const date = moment(entry.date).startOf('week').format('YYYY-MM-DD');
     const previous = totals[date] || {};
@@ -74,5 +83,5 @@ export default function totals(data) {
         clocked_holiday: (previous.clocked_holiday || 0) + matchProject(entry, HOLIDAY),
       }
     };
-  }, {}));
+  }, {}), weeks);
 }

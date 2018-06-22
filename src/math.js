@@ -6,7 +6,7 @@ const moment = extendMoment(Moment);
 const SICK_TIME = 479979;
 const PTO = 315594;
 const HACK_TIME = 306043;
-const HOLIDAY = 417567;
+const HOLIDAY = 471567;
 
 export const PTO_PER_YEAR = 6 * 40;
 export const PTO_PER_WEEK = PTO_PER_YEAR/52;
@@ -36,7 +36,7 @@ function finalSums(totals, weeks=weeksOf()) {
       return totals;
     }
     const holiday = HOLIDAYS[dateKey] || 0;
-    const used = (weekTotal.pto || 0) + (40 - holiday - (weekTotal.total || 0));
+    const used = (weekTotal.pto || 0) + (40 - holiday - (weekTotal.total || 0) + (weekTotal.clocked_holiday || 0));
     const changed = PTO_PER_WEEK - used;
     const accrual = (grandTotal.accrual || 0) + changed;
     return {

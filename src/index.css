@@ -6,8 +6,21 @@ body {
 
 table {
   width: 100%;
+  border-collapse: collapse;
 }
 
-tbody th, tbody, td {
+thead th {
   text-align: left;
+}
+
+tbody th, tbody td {
+  text-align: left;
+}
+
+tbody tr:nth-child(2n) {
+  background: #eee;
+}
+
+tfoot td, tfoot th {
+  border-top: 1px solid #333;
 }

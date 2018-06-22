@@ -13,7 +13,7 @@ export default class FetchedDate extends Component {
     if (!date) return null;
 
     return (
-      <h4 title={date.format('MMMM D, h:mm:ss a')}>
+      <h4 title={date.format('MMMM D, h:mm:ss a')} className="date-loaded">
         Data loaded from Freckle {date.fromNow()}
       </h4>
     );

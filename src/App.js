@@ -84,49 +84,49 @@ class App extends Component {
           )}
           <FetchedDate date={fetched}/>
         </header>
-        <div className="App-intro">
-          {totals.total && (
-            <h4>Up to <span style={{background: '#eee', padding: 8}}>{_.round(PTO_PER_YEAR - totals.total.used, 2)}</span> available with borrowing.</h4>
-          )}
-          <table>
-            <thead>
-              <tr>
-                <th>Week of</th>
-                <th>Entries</th>
-                <th>Billable</th>
-                <th>Hack Time</th>
-                <th>Logged PTO</th>
-                <th>Used PTO</th>
-                <th>Personal/Sick</th>
-                <th>Holiday</th>
-                <th>Total</th>
-                <th>Change</th>
-                <th>Accrued</th>
-              </tr>
-            </thead>
-            <tbody>
-              {weeksOf(selectedYear, includeCurrentWeek).map((date) => {
-                const dateKey = date.format('YYYY-MM-DD');
-                const weekTotals = totals[dateKey] || {};
-                return (
-                  <tr key={dateKey}>
-                    <th>{date.format('MMMM D')}</th>
-                    <td>{weekTotals.count || 0}</td>
-                    <td>{_.round(weekTotals.billable || 0, 2)}</td>
-                    <td>{_.round(weekTotals.hack || 0, 2)}</td>
-                    <td>{_.round(weekTotals.pto || 0, 2)}</td>
-                    <td>{_.round(weekTotals.used || 0, 2)}</td>
-                    <td>{_.round(weekTotals.sick || 0, 2)}</td>
-                    <td>{_.round(weekTotals.holiday || 0, 2)}</td>
-                    <td>{_.round(weekTotals.total || 0, 2)}</td>
-                    <td>{_.round(weekTotals.changed || 0, 2)}</td>
-                    <td>{_.round(weekTotals.accrual || 0, 2)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              {totals.total && (
+        {totals.total && (
+          <div className="App-intro">
+            <h4 className="summary">
+              Up to <span>{_.round(PTO_PER_YEAR - totals.total.used, 2)}</span> available with borrowing.
+            </h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Week of</th>
+                  <th>Entries</th>
+                  <th>Billable</th>
+                  <th>Hack Time</th>
+                  <th>Logged PTO</th>
+                  <th>Used PTO</th>
+                  <th>Personal/Sick</th>
+                  <th>Holiday</th>
+                  <th>Total</th>
+                  <th>Change</th>
+                  <th>Accrued</th>
+                </tr>
+              </thead>
+              <tbody>
+                {weeksOf(selectedYear, includeCurrentWeek).map((date) => {
+                  const dateKey = date.format('YYYY-MM-DD');
+                  const weekTotals = totals[dateKey] || {};
+                  return (
+                    <tr key={dateKey}>
+                      <th>{date.format('MMMM D')}</th>
+                      <td>{weekTotals.count || 0}</td>
+                      <td>{_.round(weekTotals.billable || 0, 2)}</td>
+                      <td>{_.round(weekTotals.hack || 0, 2)}</td>
+                      <td>{_.round(weekTotals.pto || 0, 2)}</td>
+                      <td>{_.round(weekTotals.used || 0, 2)}</td>
+                      <td>{_.round(weekTotals.sick || 0, 2)}</td>
+                      <td>{_.round(weekTotals.holiday || 0, 2)}</td>
+                      <td>{_.round(weekTotals.total || 0, 2)}</td>
+                      <td>{_.round(weekTotals.changed || 0, 2)}</td>
+                      <td>{_.round(weekTotals.accrual || 0, 2)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
                 <tr>
                   <th>TOTAL</th>
                   <td>{_.round(totals.total.count, 2)}</td>
@@ -142,10 +142,10 @@ class App extends Component {
                     <strong>{_.round(totals.total.accrual, 2)}</strong>
                   </td>
                 </tr>
-              )}
-            </tfoot>
-          </table>
-        </div>
+              </tfoot>
+            </table>
+          </div>
+        )}  
       </div>
     );
   }

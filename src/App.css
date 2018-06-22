@@ -1,25 +1,53 @@
 .App {
-  text-align: center;
+
 }
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
+  width: 80px;
+  display: inline-block;
+  float: left;
 }
 
 .App-header {
   background-color: #222;
-  height: 200px;
-  padding: 20px;
+  height: 80px;
+  line-height: 80px;
   color: white;
 }
 
 .App-title {
+  display: inline-block;
   font-size: 1.5em;
+  margin: 0 1em 0 0;
+  line-height: 80px;
+}
+.App-header select {
+  background: #333;
+  color: #60dafb;
+  font-size: 1.5em;
+}
+.App-header label {
+  color: #60dafb;
 }
 
 .App-intro {
   font-size: large;
+}
+
+.date-loaded {
+  display: inline-block;
+  float: right;
+  margin: 0 1em;
+}
+
+.summary {
+  text-align: center;
+}
+.summary span {
+  background: #eee;
+  padding: 8px;
 }
 
 @keyframes App-logo-spin {

@@ -110,7 +110,7 @@ class App extends Component {
                   const dateKey = date.format('YYYY-MM-DD');
                   const weekTotals = totals[dateKey] || {};
                   return (
-                    <tr key={dateKey}>
+                    <tr key={dateKey} className={!weekTotals.count ? 'blank-row' : ''}>
                       <th>{date.format('MMMM D')}</th>
                       <td>{weekTotals.count || 0}</td>
                       <td>{_.round(weekTotals.billable || 0, 2)}</td>

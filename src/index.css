@@ -24,3 +24,7 @@ tbody tr:nth-child(2n) {
 tfoot td, tfoot th {
   border-top: 1px solid #333;
 }
+
+tbody tr.blank-row {
+  color: #c88;
+}

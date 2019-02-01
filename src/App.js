@@ -7,11 +7,15 @@ import logo from './logo.svg';
 import './App.css';
 import FetchedDate from './FetchedDate';
 import API from './freckle';
-import totals, {PTO_PER_YEAR, weeksOf} from './math';
+import totals, {PTO_PER_YEAR, PTO_PER_WEEK, weeksOf} from './math';
 
 const moment = extendMoment(Moment);
 
 const AVAILABLE_YEARS = Array.from(moment.range(moment('2017-01-01'), moment()).by('year')).map((year) => year.format('YYYY'));
+const weeksLeft = (includeCurrentWeek) => 52 - moment().week() - (includeCurrentWeek ? 0 : 1);
+const availablePto = (total, includeCurrentWeek) => total && (
+  Math.min(PTO_PER_WEEK * weeksLeft(includeCurrentWeek), PTO_PER_YEAR/2) + total.accrual
+);
 
 class App extends Component {
   state = {
@@ -61,7 +65,6 @@ class App extends Component {
   render() {
     const {users, selectedUser, selectedYear, includeCurrentWeek, totals, fetched} = this.state;
     const currentYearSelected = selectedYear == _.last(AVAILABLE_YEARS);
-    const available_pto = totals.total && Math.min(PTO_PER_YEAR - totals.total.used, PTO_PER_YEAR/2);
     return (
       <div className="App">
         <header className="App-header">
@@ -90,7 +93,7 @@ class App extends Component {
           <div className="App-intro">
             {currentYearSelected ? (
               <h4 className="summary">
-                Up to <span>{_.round(available_pto, 2)}</span> available with borrowing.
+                Up to <span>{_.round(availablePto(totals.total, includeCurrentWeek), 2)}</span> available with borrowing.
               </h4>
             ) : (
               <h4 className="summary">
@@ -153,7 +156,7 @@ class App extends Component {
               </tfoot>
             </table>
           </div>
-        )}  
+        )}
       </div>
     );
   }

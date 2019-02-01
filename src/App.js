@@ -60,6 +60,8 @@ class App extends Component {
 
   render() {
     const {users, selectedUser, selectedYear, includeCurrentWeek, totals, fetched} = this.state;
+    const currentYearSelected = selectedYear == _.last(AVAILABLE_YEARS);
+    const available_pto = totals.total && Math.min(PTO_PER_YEAR - totals.total.used, PTO_PER_YEAR/2);
     return (
       <div className="App">
         <header className="App-header">
@@ -76,7 +78,7 @@ class App extends Component {
               <option key={year} value={year}>{year}</option>
             ))}
           </select>
-          {selectedYear == _.last(AVAILABLE_YEARS) && (
+          {currentYearSelected && (
             <label>
               <input type="checkbox" checked={includeCurrentWeek} onChange={this.toggleIncludeCurrentWeek}/>
               Include current week
@@ -86,9 +88,15 @@ class App extends Component {
         </header>
         {totals.total && (
           <div className="App-intro">
-            <h4 className="summary">
-              Up to <span>{_.round(PTO_PER_YEAR - totals.total.used, 2)}</span> available with borrowing.
-            </h4>
+            {currentYearSelected ? (
+              <h4 className="summary">
+                Up to <span>{_.round(available_pto, 2)}</span> available with borrowing.
+              </h4>
+            ) : (
+              <h4 className="summary">
+                <span>{_.round(totals.total.used, 2)} / {PTO_PER_YEAR}</span> used.
+              </h4>
+            )}
             <table>
               <thead>
                 <tr>

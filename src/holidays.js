@@ -3,11 +3,12 @@ import { extendMoment } from 'moment-range';
 const moment = extendMoment(Moment);
 
 const HOLIDAYS = [
+  {name: 'Employee Appreciation Day', dates: [moment('2019-03-01')]},
   {name: 'Memorial Day', dates: [moment('2019-05-27'), moment('2018-05-28'), moment('2017-05-29')]},
   {name: 'Independence Day', dates: [moment('2019-07-04'), moment('2018-07-04'), moment('2017-07-04')]},
   {name: 'Labor Day', dates: [moment('2019-09-02'), moment('2018-09-03'), moment('2017-09-04')]},
   {name: 'Election Day', dates: [moment('2019-11-05'), moment('2018-11-06'), moment('2017-11-05')]},
-  {name: 'Veterans Day', dates: [moment('2019-11-11'), moment('2018-11-12'), moment('2017-11-11')]},
+  {name: 'Veterans/Voting Day', dates: [moment('2019-10-28'), moment('2018-11-12'), moment('2017-11-11')]},
   {name: 'Thanksgiving', dates: [
     moment('2019-11-28'), moment('2019-11-29'),
     moment('2018-11-22'), moment('2018-11-23'),

@@ -18,7 +18,6 @@ export const weeksOf = (year, includeCurrentWeek=false) => {
     moment(year).endOf('year').startOf('week'),
     includeCurrentWeek ? moment() : moment().subtract(1, 'week'),
   );
-  console.log(year, start, end)
   return Array.from(moment.range(start, end).by('week'));
 }
 
@@ -26,7 +25,7 @@ function matchProject(entry, project_id) {
   return entry.project_id === project_id ? entry.minutes / 60 : 0;
 }
 
-function finalSums(totals, weeks=weeksOf()) {
+function finalSums(totals, weeks=weeksOf(), fullTimeStartDate) {
   return weeks.reduce((totals, week) => {
     const dateKey = week.format('YYYY-MM-DD');
     const weekTotal = totals[dateKey];
@@ -36,9 +35,10 @@ function finalSums(totals, weeks=weeksOf()) {
       return totals;
     }
     const holiday = HOLIDAYS[dateKey] || 0;
-    const used = (weekTotal.pto || 0) + (40 - holiday - (weekTotal.total || 0) + (weekTotal.clocked_holiday || 0));
-    const changed = PTO_PER_WEEK - used;
-    const accrual = (grandTotal.accrual || 0) + changed;
+    const afterStartDate = moment(dateKey).isSameOrAfter(fullTimeStartDate);
+    const used = afterStartDate ? ((weekTotal.pto || 0) + (40 - holiday - (weekTotal.total || 0) + (weekTotal.clocked_holiday || 0))) : 0;
+    const changed = afterStartDate ? PTO_PER_WEEK - used : 0;
+    const accrual = afterStartDate ? (grandTotal.accrual || 0) + changed : 0;
     return {
       ...totals,
       [dateKey]: {
@@ -65,7 +65,7 @@ function finalSums(totals, weeks=weeksOf()) {
   }, totals);
 }
 
-export default function totals(data, weeks) {
+export default function totals(data, weeks, fullTimeStartDate) {
   return finalSums(data.reduce((totals, {entry}) => {
     const date = moment(entry.date).startOf('week').format('YYYY-MM-DD');
     const previous = totals[date] || {};
@@ -83,5 +83,5 @@ export default function totals(data, weeks) {
         clocked_holiday: (previous.clocked_holiday || 0) + matchProject(entry, HOLIDAY),
       }
     };
-  }, {}), weeks);
+  }, {}), weeks, fullTimeStartDate);
 }

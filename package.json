@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.17.1",
+    "lodash": "^4.17.5",
+    "moment": "^2.21.0",
+    "moment-range": "^3.1.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "1.0.17"
@@ -12,5 +16,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "proxy": {
+    "/api/.*": {
+      "target": "https://radialdevelopmentgroup.letsfreckle.com/",
+      "changeOrigin": true
+    }
   }
 }

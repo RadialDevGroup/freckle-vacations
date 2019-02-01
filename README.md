@@ -8,6 +8,7 @@ You can find the most recent version of this guide [here](https://github.com/fac
 ## Setup
 
 ```
+cp .env.local.example .env.local # and edit to add your freckle key
 yarn
 yarn start
 ```

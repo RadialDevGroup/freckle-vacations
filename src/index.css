@@ -3,3 +3,28 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  text-align: left;
+}
+
+tbody th, tbody td {
+  text-align: left;
+}
+
+tbody tr:nth-child(2n) {
+  background: #eee;
+}
+
+tfoot td, tfoot th {
+  border-top: 1px solid #333;
+}
+
+tbody tr.blank-row {
+  color: #c88;
+}

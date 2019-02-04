@@ -33,6 +33,11 @@ class App extends Component {
     this.loadUsers();
   }
 
+  fullTimeStartDate = (selectedUser) => {
+    const employee = _.find(FTE_START_DATES, {id: selectedUser || this.state.selectedUser});
+    return _.get(employee, 'fullTimeStartDate', moment());
+  }
+
   loadUsers = () => {
     API.users().then((users) => {
       this.setState({users});
@@ -45,9 +50,11 @@ class App extends Component {
     }).then((data) => {
       const {selectedYear, includeCurrentWeek} = this.state;
       const fetched = moment();
-      const employee = _.find(FTE_START_DATES, { id: selectedUser || this.state.selectedUser, });
-      const fullTimeStartDate = _.get(employee, 'fullTimeStartDate', moment());
-      this.setState({totals: totals(data, weeksOf(selectedYear, includeCurrentWeek), fullTimeStartDate), fetched, data});
+      this.setState({
+        totals: totals(data, weeksOf(selectedYear, includeCurrentWeek), this.fullTimeStartDate(selectedUser)),
+        fetched,
+        data
+      });
     });
   }
   selectUser = ({target: {value:selectedUser}}) => {
@@ -61,7 +68,7 @@ class App extends Component {
   toggleIncludeCurrentWeek = () => {
     this.setState(({includeCurrentWeek, data, selectedYear}) => ({
       includeCurrentWeek: !includeCurrentWeek,
-      totals: totals(data, weeksOf(selectedYear, !includeCurrentWeek))
+      totals: totals(data, weeksOf(selectedYear, !includeCurrentWeek), this.fullTimeStartDate())
     }));
   }
 

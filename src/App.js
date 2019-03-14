@@ -8,6 +8,7 @@ import './App.css';
 import FetchedDate from './FetchedDate';
 import API from './freckle';
 import totals, {PTO_PER_YEAR, PTO_PER_WEEK, weeksOf} from './math';
+import { FTE_START_DATES } from './fullTimeStatus';
 
 const moment = extendMoment(Moment);
 
@@ -32,6 +33,11 @@ class App extends Component {
     this.loadUsers();
   }
 
+  fullTimeStartDate = (selectedUser) => {
+    const employee = _.find(FTE_START_DATES, {id: selectedUser || this.state.selectedUser});
+    return _.get(employee, 'fullTimeStartDate', moment());
+  }
+
   loadUsers = () => {
     API.users().then((users) => {
       this.setState({users});
@@ -44,7 +50,11 @@ class App extends Component {
     }).then((data) => {
       const {selectedYear, includeCurrentWeek} = this.state;
       const fetched = moment();
-      this.setState({totals: totals(data, weeksOf(selectedYear, includeCurrentWeek)), fetched, data});
+      this.setState({
+        totals: totals(data, weeksOf(selectedYear, includeCurrentWeek), this.fullTimeStartDate(selectedUser)),
+        fetched,
+        data
+      });
     });
   }
   selectUser = ({target: {value:selectedUser}}) => {
@@ -58,13 +68,13 @@ class App extends Component {
   toggleIncludeCurrentWeek = () => {
     this.setState(({includeCurrentWeek, data, selectedYear}) => ({
       includeCurrentWeek: !includeCurrentWeek,
-      totals: totals(data, weeksOf(selectedYear, !includeCurrentWeek))
+      totals: totals(data, weeksOf(selectedYear, !includeCurrentWeek), this.fullTimeStartDate())
     }));
   }
 
   render() {
     const {users, selectedUser, selectedYear, includeCurrentWeek, totals, fetched} = this.state;
-    const currentYearSelected = selectedYear == _.last(AVAILABLE_YEARS);
+    const currentYearSelected = selectedYear === _.last(AVAILABLE_YEARS);
     return (
       <div className="App">
         <header className="App-header">

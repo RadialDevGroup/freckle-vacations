@@ -19,7 +19,7 @@
   },
   "proxy": {
     "/api/.*": {
-      "target": "https://radialdevelopmentgroup.letsfreckle.com/",
+      "target": "https://radialdevelopmentgroup.nokotime.com/",
       "changeOrigin": true
     }
   }
